@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import BoardPreview from './components/BoardPreview'
 
@@ -52,8 +52,28 @@ const initialColumns: BoardColumn[] = [
 ]
 
 function App() {
-  const [columns, setColumns] = useState<BoardColumn[]>(initialColumns)
+  const [columns, setColumns] = useState<BoardColumn[]>(() => {
+    const savedColumns = localStorage.getItem('collabboard-columns')
+
+    if (!savedColumns) {
+      return initialColumns
+    }
+
+    try {
+      return JSON.parse(savedColumns) as BoardColumn[]
+    } catch {
+      return initialColumns
+    }
+  })
+
   const [newTask, setNewTask] = useState('')
+
+  useEffect(() => {
+    localStorage.setItem(
+      'collabboard-columns',
+      JSON.stringify(columns),
+    )
+  }, [columns])
 
   const addTask = () => {
     const trimmedTask = newTask.trim()
