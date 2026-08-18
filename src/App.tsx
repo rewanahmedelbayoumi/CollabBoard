@@ -82,6 +82,15 @@ function App() {
     setNewTask('')
   }
 
+  const deleteTask = (taskId: number) => {
+    setColumns((currentColumns) =>
+      currentColumns.map((column) => ({
+        ...column,
+        tasks: column.tasks.filter((task) => task.id !== taskId),
+      })),
+    )
+  }
+
   return (
     <div className="app">
       <header className="navbar">
@@ -122,13 +131,20 @@ function App() {
               aria-label="New task"
             />
 
-            <button className="primary-button" onClick={addTask}>
+            <button
+              type="button"
+              className="primary-button"
+              onClick={addTask}
+            >
               Add task
             </button>
           </div>
         </div>
 
-        <BoardPreview columns={columns} />
+        <BoardPreview
+          columns={columns}
+          onDeleteTask={deleteTask}
+        />
       </main>
     </div>
   )
