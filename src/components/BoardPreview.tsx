@@ -12,11 +12,13 @@ type BoardColumn = {
 type BoardPreviewProps = {
   columns: BoardColumn[]
   onDeleteTask: (taskId: number) => void
+  onMoveTask: (taskId: number, targetColumn: string) => void
 }
 
 function BoardPreview({
   columns,
   onDeleteTask,
+  onMoveTask,
 }: BoardPreviewProps) {
   return (
     <div className="board-preview" id="board">
@@ -42,14 +44,33 @@ function BoardPreview({
                   <span>{task.user}</span>
                 </div>
 
-                <button
-                  type="button"
-                  className="delete-button"
-                  onClick={() => onDeleteTask(task.id)}
-                  aria-label={`Delete ${task.title}`}
-                >
-                  ×
-                </button>
+                <div className="task-actions">
+                  <select
+                    value={column.title}
+                    onChange={(event) =>
+                      onMoveTask(task.id, event.target.value)
+                    }
+                    aria-label={`Move ${task.title}`}
+                  >
+                    {columns.map((targetColumn) => (
+                      <option
+                        key={targetColumn.title}
+                        value={targetColumn.title}
+                      >
+                        {targetColumn.title}
+                      </option>
+                    ))}
+                  </select>
+
+                  <button
+                    type="button"
+                    className="delete-button"
+                    onClick={() => onDeleteTask(task.id)}
+                    aria-label={`Delete ${task.title}`}
+                  >
+                    ×
+                  </button>
+                </div>
               </div>
             ))}
           </div>

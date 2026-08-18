@@ -330,3 +330,27 @@ button {
   background: rgba(255, 80, 80, 0.12);
   color: #ff6b6b;
 }
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.task-actions select {
+  max-width: 105px;
+  padding: 5px 7px;
+
+  border: 1px solid #293451;
+  border-radius: 6px;
+
+  background: #11182c;
+  color: #8994b0;
+
+  font-size: 0.65rem;
+  cursor: pointer;
+}
+
+.task-actions select:focus {
+  outline: 1px solid #646cff;
+  border-color: #646cff;
+}

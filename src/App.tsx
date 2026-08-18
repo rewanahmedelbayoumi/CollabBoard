@@ -91,6 +91,38 @@ function App() {
     )
   }
 
+  const moveTask = (taskId: number, targetColumn: string) => {
+    let taskToMove: Task | undefined
+
+    const columnsWithoutTask = columns.map((column) => {
+      const task = column.tasks.find((item) => item.id === taskId)
+
+      if (task) {
+        taskToMove = task
+      }
+
+      return {
+        ...column,
+        tasks: column.tasks.filter((item) => item.id !== taskId),
+      }
+    })
+
+    if (!taskToMove) {
+      return
+    }
+
+    setColumns(
+      columnsWithoutTask.map((column) =>
+        column.title === targetColumn
+          ? {
+              ...column,
+              tasks: [...column.tasks, taskToMove as Task],
+            }
+          : column,
+      ),
+    )
+  }
+
   return (
     <div className="app">
       <header className="navbar">
@@ -144,6 +176,7 @@ function App() {
         <BoardPreview
           columns={columns}
           onDeleteTask={deleteTask}
+          onMoveTask={moveTask}
         />
       </main>
     </div>
