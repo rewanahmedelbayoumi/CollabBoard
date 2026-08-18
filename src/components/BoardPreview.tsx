@@ -1,16 +1,22 @@
-type Task = {
-  id: number
-  title: string
-  user: string
-}
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
 
-type BoardColumn = {
-  title: string
-  tasks: Task[]
-}
+import type {
+  DragEndEvent,
+  DragStartEvent,
+} from '@dnd-kit/core'
+
+import { useState } from 'react'
+import type { BoardColumn as BoardColumnType, Task } from '../types/board'
+import BoardColumn from './BoardColumn'
 
 type BoardPreviewProps = {
-  columns: BoardColumn[]
+  columns: BoardColumnType[]
   onDeleteTask: (taskId: number) => void
   onMoveTask: (taskId: number, targetColumn: string) => void
   onEditTask: (taskId: number, newTitle: string) => void
@@ -22,81 +28,88 @@ function BoardPreview({
   onMoveTask,
   onEditTask,
 }: BoardPreviewProps) {
+  const [activeTask, setActiveTask] = useState<Task | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+  )
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const taskId = Number(event.active.id)
+
+    const task = columns
+      .flatMap((column) => column.tasks)
+      .find((item) => item.id === taskId)
+
+    setActiveTask(task ?? null)
+  }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    setActiveTask(null)
+
+    if (!over) {
+      return
+    }
+
+    const taskId = Number(active.id)
+    const targetColumn = String(over.id)
+
+    onMoveTask(taskId, targetColumn)
+  }
+
+  const handleDragCancel = () => {
+    setActiveTask(null)
+  }
+
   return (
-    <div className="board-preview" id="board">
-      <div className="preview-header">
-        <div className="window-dots">
-          <span />
-          <span />
-          <span />
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
+    >
+      <div className="board-preview" id="board">
+        <div className="preview-header">
+          <div className="window-dots">
+            <span />
+            <span />
+            <span />
+          </div>
+
+          <span>CollabBoard</span>
         </div>
 
-        <span>CollabBoard</span>
+        <div className="preview-content">
+          {columns.map((column) => (
+            <BoardColumn
+              key={column.title}
+              column={column}
+              columns={columns}
+              onDeleteTask={onDeleteTask}
+              onMoveTask={onMoveTask}
+              onEditTask={onEditTask}
+            />
+          ))}
+        </div>
       </div>
 
-      <div className="preview-content">
-        {columns.map((column) => (
-          <div className="column" key={column.title}>
-            <h3>{column.title}</h3>
-
-            {column.tasks.map((task) => (
-              <div className="task-card" key={task.id}>
-                <div className="task-content">
-                  <strong>{task.title}</strong>
-                  <span>{task.user}</span>
-                </div>
-
-                <div className="task-actions">
-                  <select
-                    value={column.title}
-                    onChange={(event) =>
-                      onMoveTask(task.id, event.target.value)
-                    }
-                    aria-label={`Move ${task.title}`}
-                  >
-                    {columns.map((targetColumn) => (
-                      <option
-                        key={targetColumn.title}
-                        value={targetColumn.title}
-                      >
-                        {targetColumn.title}
-                      </option>
-                    ))}
-                  </select>
-
-                  <button
-                    type="button"
-                    className="edit-button"
-                    onClick={() => {
-                      const updatedTitle = window.prompt(
-                        'Edit task title:',
-                        task.title,
-                      )
-
-                      if (updatedTitle !== null) {
-                        onEditTask(task.id, updatedTitle)
-                      }
-                    }}
-                    aria-label={`Edit ${task.title}`}
-                  >
-                    ✎
-                  </button>
-
-                  <button
-                    type="button"
-                    className="delete-button"
-                    onClick={() => onDeleteTask(task.id)}
-                    aria-label={`Delete ${task.title}`}
-                  >
-                    ×
-                  </button>
-                </div>
-              </div>
-            ))}
+      <DragOverlay>
+        {activeTask ? (
+          <div className="task-card task-card-overlay">
+            <div className="task-content">
+              <strong>{activeTask.title}</strong>
+              <span>{activeTask.user}</span>
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   )
 }
 
