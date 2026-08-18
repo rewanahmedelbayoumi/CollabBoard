@@ -34,26 +34,54 @@ function TaskCard({
     opacity: isDragging ? 0.5 : 1,
   }
 
+  const handleEdit = () => {
+    const updatedTitle = window.prompt(
+      'Edit task title:',
+      task.title,
+    )
+
+    if (updatedTitle !== null && updatedTitle.trim() !== '') {
+      onEditTask(task.id, updatedTitle)
+    }
+  }
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className="task-card"
-      {...listeners}
-      {...attributes}
+      className={`task-card ${isDragging ? 'is-dragging' : ''}`}
     >
       <div className="task-content">
-        <strong>{task.title}</strong>
-        <span>{task.user}</span>
+        <div
+          className="drag-handle"
+          {...listeners}
+          {...attributes}
+          aria-label={`Drag ${task.title}`}
+          title="Drag task"
+        >
+          <span>⠿</span>
+        </div>
+
+        <div className="task-info">
+          <strong>{task.title}</strong>
+          <span>{task.user}</span>
+        </div>
       </div>
 
-      <div className="task-actions">
+      <div
+        className="task-actions"
+        onPointerDownCapture={(event) => {
+          event.stopPropagation()
+        }}
+        onMouseDownCapture={(event) => {
+          event.stopPropagation()
+        }}
+      >
         <select
           value={column.title}
-          onChange={(event) =>
+          onChange={(event) => {
             onMoveTask(task.id, event.target.value)
-          }
-          onPointerDown={(event) => event.stopPropagation()}
+          }}
           aria-label={`Move ${task.title}`}
         >
           {columns.map((targetColumn) => (
@@ -69,18 +97,9 @@ function TaskCard({
         <button
           type="button"
           className="edit-button"
-          onPointerDown={(event) => event.stopPropagation()}
-          onClick={() => {
-            const updatedTitle = window.prompt(
-              'Edit task title:',
-              task.title,
-            )
-
-            if (updatedTitle !== null) {
-              onEditTask(task.id, updatedTitle)
-            }
-          }}
+          onClick={handleEdit}
           aria-label={`Edit ${task.title}`}
+          title="Edit task"
         >
           ✎
         </button>
@@ -88,9 +107,9 @@ function TaskCard({
         <button
           type="button"
           className="delete-button"
-          onPointerDown={(event) => event.stopPropagation()}
           onClick={() => onDeleteTask(task.id)}
           aria-label={`Delete ${task.title}`}
+          title="Delete task"
         >
           ×
         </button>
