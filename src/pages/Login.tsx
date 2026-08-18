@@ -1,26 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
-import { z } from 'zod'
+import { Link, useNavigate } from 'react-router-dom'
 
-const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email address'),
-
-  password: z
-    .string()
-    .min(1, 'Password is required')
-    .min(8, 'Password must be at least 8 characters'),
-})
-
-type LoginFormData = z.infer<typeof loginSchema>
+import { loginSchema, type LoginFormData } from '../schemas/authSchema'
+import { login } from '../services/auth'
+import { useAuthStore } from '../store/authStore'
 
 function Login() {
+  const navigate = useNavigate()
+  const setAuth = useAuthStore((state) => state.setAuth)
+
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -31,7 +24,18 @@ function Login() {
   })
 
   const onSubmit = async (data: LoginFormData) => {
-    console.log('Login data:', data)
+    try {
+      const response = await login(data)
+
+      setAuth(response.user, response.token)
+
+      navigate('/board', { replace: true })
+    } catch {
+      setError('root', {
+        message:
+          'Login failed. Please check your email and password.',
+      })
+    }
   }
 
   return (
@@ -68,6 +72,10 @@ function Login() {
             <p role="alert">{errors.password.message}</p>
           )}
         </div>
+
+        {errors.root && (
+          <p role="alert">{errors.root.message}</p>
+        )}
 
         <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Signing in...' : 'Login'}

@@ -6,6 +6,8 @@ import {
 } from 'react-router-dom'
 
 import Board from '../pages/Board'
+import Login from '../pages/Login'
+import ProtectedRoute from './ProtectedRoute'
 
 function AppRouter() {
   return (
@@ -13,13 +15,20 @@ function AppRouter() {
       <Routes>
         <Route
           path="/"
-          element={<Navigate to="/board" replace />}
+          element={<Navigate to="/login" replace />}
         />
 
         <Route
-          path="/board"
-          element={<Board />}
+          path="/login"
+          element={<Login />}
         />
+
+        <Route element={<ProtectedRoute />}>
+          <Route
+            path="/board"
+            element={<Board />}
+          />
+        </Route>
       </Routes>
     </BrowserRouter>
   )

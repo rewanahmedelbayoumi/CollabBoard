@@ -1,14 +1,4 @@
-import axios from 'axios'
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
-
-const authApi = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
+import { apiRequest } from './api'
 
 export type LoginPayload = {
   email: string
@@ -34,24 +24,20 @@ export type AuthResponse = {
   token?: string
 }
 
-export const login = async (
+export const login = (
   payload: LoginPayload,
 ): Promise<AuthResponse> => {
-  const response = await authApi.post<AuthResponse>(
-    '/auth/login',
-    payload,
-  )
-
-  return response.data
+  return apiRequest<AuthResponse>('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
 }
 
-export const register = async (
+export const register = (
   payload: RegisterPayload,
 ): Promise<AuthResponse> => {
-  const response = await authApi.post<AuthResponse>(
-    '/auth/register',
-    payload,
-  )
-
-  return response.data
+  return apiRequest<AuthResponse>('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
 }

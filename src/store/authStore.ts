@@ -10,17 +10,29 @@ type AuthState = {
   logout: () => void
 }
 
-const savedUser = localStorage.getItem('collabboard-user')
-const savedToken = localStorage.getItem('collabboard-token')
+const getSavedUser = (): AuthUser | null => {
+  const savedUser = localStorage.getItem('collabboard-user')
 
-const initialUser: AuthUser | null = savedUser
-  ? JSON.parse(savedUser)
-  : null
+  if (!savedUser) {
+    return null
+  }
+
+  try {
+    return JSON.parse(savedUser) as AuthUser
+  } catch {
+    localStorage.removeItem('collabboard-user')
+    return null
+  }
+}
+
+const getSavedToken = (): string | null => {
+  return localStorage.getItem('collabboard-token')
+}
 
 export const useAuthStore = create<AuthState>((set) => ({
-  user: initialUser,
-  token: savedToken,
-  isAuthenticated: Boolean(initialUser),
+  user: getSavedUser(),
+  token: getSavedToken(),
+  isAuthenticated: Boolean(getSavedUser()),
 
   setAuth: (user, token) => {
     localStorage.setItem(
@@ -29,7 +41,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     )
 
     if (token) {
-      localStorage.setItem('collabboard-token', token)
+      localStorage.setItem(
+        'collabboard-token',
+        token,
+      )
+    } else {
+      localStorage.removeItem('collabboard-token')
     }
 
     set({
