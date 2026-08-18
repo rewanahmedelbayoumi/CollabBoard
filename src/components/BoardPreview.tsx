@@ -13,12 +13,14 @@ type BoardPreviewProps = {
   columns: BoardColumn[]
   onDeleteTask: (taskId: number) => void
   onMoveTask: (taskId: number, targetColumn: string) => void
+  onEditTask: (taskId: number, newTitle: string) => void
 }
 
 function BoardPreview({
   columns,
   onDeleteTask,
   onMoveTask,
+  onEditTask,
 }: BoardPreviewProps) {
   return (
     <div className="board-preview" id="board">
@@ -61,6 +63,24 @@ function BoardPreview({
                       </option>
                     ))}
                   </select>
+
+                  <button
+                    type="button"
+                    className="edit-button"
+                    onClick={() => {
+                      const updatedTitle = window.prompt(
+                        'Edit task title:',
+                        task.title,
+                      )
+
+                      if (updatedTitle !== null) {
+                        onEditTask(task.id, updatedTitle)
+                      }
+                    }}
+                    aria-label={`Edit ${task.title}`}
+                  >
+                    ✎
+                  </button>
 
                   <button
                     type="button"

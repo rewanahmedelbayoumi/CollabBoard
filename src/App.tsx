@@ -123,6 +123,28 @@ function App() {
     )
   }
 
+  const editTask = (taskId: number, newTitle: string) => {
+    const trimmedTitle = newTitle.trim()
+
+    if (!trimmedTitle) {
+      return
+    }
+
+    setColumns((currentColumns) =>
+      currentColumns.map((column) => ({
+        ...column,
+        tasks: column.tasks.map((task) =>
+          task.id === taskId
+            ? {
+                ...task,
+                title: trimmedTitle,
+              }
+            : task,
+        ),
+      })),
+    )
+  }
+
   return (
     <div className="app">
       <header className="navbar">
@@ -177,6 +199,7 @@ function App() {
           columns={columns}
           onDeleteTask={deleteTask}
           onMoveTask={moveTask}
+          onEditTask={editTask}
         />
       </main>
     </div>
