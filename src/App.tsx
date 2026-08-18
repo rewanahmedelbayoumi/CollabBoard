@@ -173,6 +173,18 @@ function App() {
     )
   }
 
+  const resetBoard = () => {
+    const confirmed = window.confirm(
+      'Are you sure you want to reset the board?',
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    setColumns(initialColumns)
+  }
+
   return (
     <div className="app">
       <header className="navbar">
@@ -241,6 +253,14 @@ function App() {
               onClick={clearBoard}
             >
               Clear board
+            </button>
+
+            <button
+              type="button"
+              className="reset-button"
+              onClick={resetBoard}
+            >
+              Reset board
             </button>
           </div>
         </div>
