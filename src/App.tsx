@@ -1,17 +1,7 @@
 import { useEffect, useState } from 'react'
+import type { BoardColumn, Task } from './types/board'
 import './App.css'
 import BoardPreview from './components/BoardPreview'
-
-type Task = {
-  id: number
-  title: string
-  user: string
-}
-
-type BoardColumn = {
-  title: string
-  tasks: Task[]
-}
 
 const initialColumns: BoardColumn[] = [
   {
