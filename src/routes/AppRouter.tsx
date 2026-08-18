@@ -8,6 +8,7 @@ import {
 import Board from '../pages/Board'
 import Login from '../pages/Login'
 import ProtectedRoute from './ProtectedRoute'
+import Register from '../pages/Register'
 
 function AppRouter() {
   return (
@@ -22,6 +23,11 @@ function AppRouter() {
           path="/login"
           element={<Login />}
         />
+
+        <Route
+  path="/register"
+  element={<Register />}
+/>
 
         <Route element={<ProtectedRoute />}>
           <Route
