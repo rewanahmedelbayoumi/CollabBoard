@@ -57,6 +57,7 @@ function App() {
   })
 
   const [newTask, setNewTask] = useState('')
+  const [newTaskColumn, setNewTaskColumn] = useState('To Do')
 
   useEffect(() => {
     localStorage.setItem(
@@ -79,8 +80,8 @@ function App() {
     }
 
     setColumns((currentColumns) =>
-      currentColumns.map((column, index) =>
-        index === 0
+      currentColumns.map((column) =>
+        column.title === newTaskColumn
           ? {
               ...column,
               tasks: [...column.tasks, task],
@@ -194,6 +195,20 @@ function App() {
               placeholder="Enter a new task..."
               aria-label="New task"
             />
+
+            <select
+              value={newTaskColumn}
+              onChange={(event) =>
+                setNewTaskColumn(event.target.value)
+              }
+              aria-label="Select task column"
+            >
+              {columns.map((column) => (
+                <option key={column.title} value={column.title}>
+                  {column.title}
+                </option>
+              ))}
+            </select>
 
             <button
               type="button"
