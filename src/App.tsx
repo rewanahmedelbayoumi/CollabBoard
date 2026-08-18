@@ -156,6 +156,23 @@ function App() {
     )
   }
 
+  const clearBoard = () => {
+    const confirmed = window.confirm(
+      'Are you sure you want to clear all tasks?',
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    setColumns((currentColumns) =>
+      currentColumns.map((column) => ({
+        ...column,
+        tasks: [],
+      })),
+    )
+  }
+
   return (
     <div className="app">
       <header className="navbar">
@@ -216,6 +233,14 @@ function App() {
               onClick={addTask}
             >
               Add task
+            </button>
+
+            <button
+              type="button"
+              className="clear-button"
+              onClick={clearBoard}
+            >
+              Clear board
             </button>
           </div>
         </div>
