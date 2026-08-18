@@ -6,6 +6,8 @@ import { loginSchema, type LoginFormData } from '../schemas/authSchema'
 import { login } from '../services/auth'
 import { useAuthStore } from '../store/authStore'
 
+import './Auth.css'
+
 function Login() {
   const navigate = useNavigate()
   const setAuth = useAuthStore((state) => state.setAuth)
@@ -39,53 +41,107 @@ function Login() {
   }
 
   return (
-    <main>
-      <h1>Login</h1>
+    <main className="auth-page">
+      <div className="auth-card">
+        <div className="auth-brand">
+          <span className="auth-logo">CollabBoard</span>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="email">Email</label>
-
-          <input
-            id="email"
-            type="email"
-            placeholder="Enter your email"
-            {...register('email')}
-          />
-
-          {errors.email && (
-            <p role="alert">{errors.email.message}</p>
-          )}
+          <span className="auth-badge">
+            WORKSPACE
+          </span>
         </div>
 
-        <div>
-          <label htmlFor="password">Password</label>
+        <div className="auth-heading">
+          <p className="auth-eyebrow">
+            WELCOME BACK
+          </p>
 
-          <input
-            id="password"
-            type="password"
-            placeholder="Enter your password"
-            {...register('password')}
-          />
+          <h1>
+            Sign in to your workspace.
+          </h1>
 
-          {errors.password && (
-            <p role="alert">{errors.password.message}</p>
-          )}
+          <p>
+            Continue managing your projects, tasks,
+            and team collaboration.
+          </p>
         </div>
 
-        {errors.root && (
-          <p role="alert">{errors.root.message}</p>
-        )}
+        <form
+          className="auth-form"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="form-field">
+            <label htmlFor="email">
+              Email
+            </label>
 
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Signing in...' : 'Login'}
-        </button>
-      </form>
+            <input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              {...register('email')}
+            />
 
-      <p>
-        Don't have an account?{' '}
-        <Link to="/register">Register</Link>
-      </p>
+            {errors.email && (
+              <p
+                className="field-error"
+                role="alert"
+              >
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="password">
+              Password
+            </label>
+
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              {...register('password')}
+            />
+
+            {errors.password && (
+              <p
+                className="field-error"
+                role="alert"
+              >
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          {errors.root && (
+            <p
+              className="auth-error"
+              role="alert"
+            >
+              {errors.root.message}
+            </p>
+          )}
+
+          <button
+            className="auth-submit"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting
+              ? 'Signing in...'
+              : 'Sign in'}
+          </button>
+        </form>
+
+        <p className="auth-switch">
+          Don't have an account?{' '}
+
+          <Link to="/register">
+            Create one
+          </Link>
+        </p>
+      </div>
     </main>
   )
 }
